@@ -2,6 +2,9 @@ import 'dotenv/config';
 import { Bot } from 'grammy';
 import { GrammyError, HttpError } from 'grammy';
 
+if(!process.env.BOT_TOKEN) {
+  throw new Error('Bot token is not defined');
+}
 const bot = new Bot(process.env.BOT_TOKEN);
 
 // Ответ на команду /start
@@ -10,7 +13,7 @@ bot.command('start', (ctx) =>
 );
 
 // Ответ на любое сообщение
-bot.on('message', (ctx) => {
+bot.on('message:text', (ctx) => {
   ctx.reply(ctx.message.text);
 });
 
