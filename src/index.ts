@@ -2,15 +2,14 @@ import 'dotenv/config';
 import { Bot } from 'grammy';
 import { GrammyError, HttpError } from 'grammy';
 import * as mongoose from "mongoose";
+import {start} from "./commands/start.js";
 
 if(!process.env.BOT_TOKEN) {
   throw new Error('Bot token is not defined');
 }
 const bot = new Bot(process.env.BOT_TOKEN);
 
-bot.command('start', (ctx) =>
-  ctx.reply('Привет! Отправь мне любой текст, и я его повторю.'),
-);
+bot.command('start', start);
 
 // Ответ на любое сообщение
 bot.on('message:text', (ctx) => {
