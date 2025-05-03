@@ -1,21 +1,49 @@
 import 'dotenv/config';
-import { Bot } from 'grammy';
-import { GrammyError, HttpError } from 'grammy';
+import {Bot, GrammyError, HttpError, InlineKeyboard} from 'grammy';
 import * as mongoose from "mongoose";
-import {start} from "./commands/start.js";
+import {start} from "./commands/index.js";
+import {hydrate} from "@grammyjs/hydrate";
+import {MyContext} from "./types.js";
+import {User} from "./models/User.js";
 
 if(!process.env.BOT_TOKEN) {
   throw new Error('Bot token is not defined');
 }
-const bot = new Bot(process.env.BOT_TOKEN);
+const bot = new Bot<MyContext>(process.env.BOT_TOKEN);
+
+bot.use(hydrate());
 
 bot.command('start', start);
 
 // Ответ на любое сообщение
+
 bot.on('message:text', (ctx) => {
   ctx.reply(ctx.message.text);
   console.log(ctx.from)
 });
+bot.callbackQuery('menu', (ctx) => {
+  ctx.answerCallbackQuery();
+
+  ctx.callbackQuery.message?.editText(
+      "Вы в главном меню!\nВыберите варианты кнопок",
+      {
+        reply_markup: new InlineKeyboard()
+            .text('Товары', 'products').row()
+            .text('Профиль', 'profile').row(),
+      }
+  )
+})
+
+bot.callbackQuery('products', (ctx) => {
+  ctx.answerCallbackQuery();
+  ctx.callbackQuery.message?.editText("Вы находитесь в разделе товары", {reply_markup: new InlineKeyboard().text('Назад', 'menu').row()});
+})
+
+bot.callbackQuery('profile', async (ctx) => {
+  await ctx.answerCallbackQuery();
+  const user = await User.findOne({telegramId: ctx.from.id});
+  await ctx.callbackQuery.message?.editText(`Ваш профиль:\nID: ${user!.telegramId}\nName: ${user!.username}`, {reply_markup: new InlineKeyboard().text('Назад', 'menu').row()});
+})
 
 // Обработка ошибок согласно документации
 bot.catch((err) => {
