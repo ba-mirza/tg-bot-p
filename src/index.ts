@@ -1,13 +1,13 @@
 import 'dotenv/config';
 import { Bot } from 'grammy';
 import { GrammyError, HttpError } from 'grammy';
+import * as mongoose from "mongoose";
 
 if(!process.env.BOT_TOKEN) {
   throw new Error('Bot token is not defined');
 }
 const bot = new Bot(process.env.BOT_TOKEN);
 
-// Ответ на команду /start
 bot.command('start', (ctx) =>
   ctx.reply('Привет! Отправь мне любой текст, и я его повторю.'),
 );
@@ -15,6 +15,7 @@ bot.command('start', (ctx) =>
 // Ответ на любое сообщение
 bot.on('message:text', (ctx) => {
   ctx.reply(ctx.message.text);
+  console.log(ctx.from)
 });
 
 // Обработка ошибок согласно документации
@@ -32,11 +33,15 @@ bot.catch((err) => {
   }
 });
 
-// Функция запуска бота
 async function startBot() {
+  if(!process.env.MONGODB_URI) {
+    throw new Error('Mongo URI is not defined');
+  }
+
   try {
+    await mongoose.connect(process.env.MONGODB_URI);
     bot.start();
-    console.log('Bot started');
+    console.log('MongoDB Connected & Bot Started');
   } catch (error) {
     console.error('Error in startBot:', error);
   }
