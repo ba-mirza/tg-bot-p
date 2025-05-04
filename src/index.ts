@@ -4,8 +4,7 @@ import * as mongoose from "mongoose";
 import {start} from "./commands/index.js";
 import {hydrate} from "@grammyjs/hydrate";
 import {MyContext} from "./types.js";
-import {User} from "./models/User.js";
-import {Button} from "./keyboards/index.js";
+import {menu, product, profile} from "./callbacks/index.js";
 
 if(!process.env.BOT_TOKEN) {
   throw new Error('Bot token is not defined');
@@ -20,31 +19,13 @@ bot.command('start', start);
 
 bot.on('message:text', (ctx) => {
   ctx.reply(ctx.message.text);
-  console.log(ctx.from)
 });
-bot.callbackQuery('menu', (ctx) => {
-  ctx.answerCallbackQuery();
 
-  ctx.callbackQuery.message?.editText(
-      "Вы в главном меню!\nВыберите варианты кнопок",
-      {
-        reply_markup: new InlineKeyboard()
-            .text('Товары', 'products').row()
-            .text('Профиль', 'profile').row(),
-      }
-  )
-})
+bot.callbackQuery('menu', menu)
 
-bot.callbackQuery('products', (ctx) => {
-  ctx.answerCallbackQuery();
-  ctx.callbackQuery.message?.editText("Вы находитесь в разделе товары", {reply_markup: Button.back});
-})
+bot.callbackQuery('products', product);
 
-bot.callbackQuery('profile', async (ctx) => {
-  await ctx.answerCallbackQuery();
-  const user = await User.findOne({telegramId: ctx.from.id});
-  await ctx.callbackQuery.message?.editText(`Ваш профиль:\nID: ${user!.telegramId}\nName: ${user!.username}`, {reply_markup: Button.back});
-})
+bot.callbackQuery('profile', profile)
 
 // Обработка ошибок согласно документации
 bot.catch((err) => {
