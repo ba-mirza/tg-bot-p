@@ -5,6 +5,7 @@ import {start} from "./commands/index.js";
 import {hydrate} from "@grammyjs/hydrate";
 import {MyContext} from "./types.js";
 import {User} from "./models/User.js";
+import {Button} from "./keyboards/index.js";
 
 if(!process.env.BOT_TOKEN) {
   throw new Error('Bot token is not defined');
@@ -36,13 +37,13 @@ bot.callbackQuery('menu', (ctx) => {
 
 bot.callbackQuery('products', (ctx) => {
   ctx.answerCallbackQuery();
-  ctx.callbackQuery.message?.editText("Вы находитесь в разделе товары", {reply_markup: new InlineKeyboard().text('Назад', 'menu').row()});
+  ctx.callbackQuery.message?.editText("Вы находитесь в разделе товары", {reply_markup: Button.back});
 })
 
 bot.callbackQuery('profile', async (ctx) => {
   await ctx.answerCallbackQuery();
   const user = await User.findOne({telegramId: ctx.from.id});
-  await ctx.callbackQuery.message?.editText(`Ваш профиль:\nID: ${user!.telegramId}\nName: ${user!.username}`, {reply_markup: new InlineKeyboard().text('Назад', 'menu').row()});
+  await ctx.callbackQuery.message?.editText(`Ваш профиль:\nID: ${user!.telegramId}\nName: ${user!.username}`, {reply_markup: Button.back});
 })
 
 // Обработка ошибок согласно документации
