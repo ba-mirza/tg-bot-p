@@ -15,12 +15,6 @@ bot.use(hydrate());
 
 bot.command('start', start);
 
-// Ответ на любое сообщение
-
-bot.on('message:text', (ctx) => {
-  ctx.reply(ctx.message.text);
-});
-
 bot.callbackQuery('menu', menu);
 
 bot.callbackQuery('products', product);
@@ -29,11 +23,10 @@ bot.callbackQuery('profile', profile);
 
 bot.callbackQuery(/^buyProduct-\d+$/, buyProductById);
 
-// Обработка ошибок согласно документации
 bot.catch((err) => {
   const ctx = err.ctx;
   console.error(`Error while handling update ${ctx.update.update_id}:`);
-  const e = err.error;
+  const e: unknown = err.error;
 
   if (e instanceof GrammyError) {
     console.error('Error in request:', e.description);
@@ -53,8 +46,8 @@ async function startBot() {
     await mongoose.connect(process.env.MONGODB_URI);
     bot.start();
     console.log('MongoDB Connected & Bot Started');
-  } catch (error) {
-    console.error('Error in startBot:', error);
+  } catch (err) {
+    console.error('Error in startBot:', err);
   }
 }
 

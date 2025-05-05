@@ -13,14 +13,6 @@ export const Route = {
     Back: new InlineKeyboard().text('◀️Назад', 'menu').row(),
 } as const;
 
-function t(btn: string) {
-    return btn;
-}
-
-export function ButtonType<T extends string>(btn: T) {
-    return new InlineKeyboard().text(t(btn as string), btn).row();
-}
-
 export function generateButtons(btns: unknown) {
     if (typeof btns !== "undefined" && Array.isArray(btns)) {
         if (!btns.length) {
