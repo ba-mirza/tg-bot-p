@@ -1,10 +1,10 @@
 import 'dotenv/config';
-import {Bot, GrammyError, HttpError, InlineKeyboard} from 'grammy';
+import {Bot, GrammyError, HttpError} from 'grammy';
 import * as mongoose from "mongoose";
 import {start} from "./commands/index.js";
 import {hydrate} from "@grammyjs/hydrate";
 import {MyContext} from "./types.js";
-import {menu, product, profile} from "./callbacks/index.js";
+import {buyProductById, menu, product, profile} from "./callbacks/index.js";
 
 if(!process.env.BOT_TOKEN) {
   throw new Error('Bot token is not defined');
@@ -21,11 +21,13 @@ bot.on('message:text', (ctx) => {
   ctx.reply(ctx.message.text);
 });
 
-bot.callbackQuery('menu', menu)
+bot.callbackQuery('menu', menu);
 
 bot.callbackQuery('products', product);
 
-bot.callbackQuery('profile', profile)
+bot.callbackQuery('profile', profile);
+
+bot.callbackQuery(/^buyProduct-\d+$/, buyProductById);
 
 // Обработка ошибок согласно документации
 bot.catch((err) => {

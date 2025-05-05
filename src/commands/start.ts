@@ -1,6 +1,6 @@
 import {User} from "../models/User.js";
 import {MyContext} from "../types.js";
-import {Button} from "../keyboards/index.js";
+import {Route} from "../keyboards/index.js";
 
 export const start = async (ctx: MyContext) => {
     if(!ctx.from) {
@@ -14,7 +14,7 @@ export const start = async (ctx: MyContext) => {
         if (existingUser) {
             return ctx.reply(
                 "You already registered!",
-                {reply_markup: Button.Menu}
+                {reply_markup: Route.Menu}
             );
         }
 
@@ -27,7 +27,7 @@ export const start = async (ctx: MyContext) => {
 
         await ctx.reply(
             "You successfully registered!",
-            {reply_markup: Button.Menu}
+            {reply_markup: Route.Menu}
         );
     } catch (err) {
         console.error("[register]: Something went wrong", err);

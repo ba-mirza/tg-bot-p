@@ -1,6 +1,11 @@
 import {InlineKeyboard} from "grammy";
+import {ButtonEnums} from "../consts/Buttons.js";
 
-export const Button = {
+// TODO: Переделать роутинг между инлайн кнопками. Объекты Route должны быть функциями
+//  которые принимают в качестве аргумента текущий путь откуда он пришел.
+//  Всю цепочку пути сохранять в неком routeState, с помощью него реализовать
+//  кнопку "Назад" чтобы попасть в предыдущий callbackQuery.
+export const Route = {
     Menu: new InlineKeyboard().text('Меню', 'menu').row(),
     MainView: new InlineKeyboard()
         .text('Товары', 'products').row()
@@ -19,15 +24,19 @@ export function ButtonType<T extends string>(btn: T) {
 export function generateButtons(btns: unknown) {
     if (typeof btns !== "undefined" && Array.isArray(btns)) {
         if (!btns.length) {
-            return Button.Back;
+            return Route.Back;
         }
-        const keyboard = new InlineKeyboard();
-        for (const btn of btns) {
-            keyboard.text(btn.price, btn.name).row();
-        }
-        const backButton = Button.Back.inline_keyboard[0][0];
-        keyboard.text(backButton.text, 'menu').row();
-        return keyboard;
+
+        const productsButtonRows = btns.map((btn) => {
+            return InlineKeyboard.text(btn.name, `buyProduct-${btn.id}`);
+        });
+
+        const newKeyboard = InlineKeyboard.from([
+            productsButtonRows,
+            [InlineKeyboard.text('Назад', ButtonEnums.MENU)]
+        ])
+
+        return newKeyboard;
     }
-    return Button.Back;
+    return Route.Back;
 }
