@@ -25,10 +25,12 @@ export function generateButtons(btns: unknown) {
         const btn2 = btns[i + 1];
 
         keyboard.text(btn1.name, `buyProduct-${btn1.id}`);
+
         if (btn2) {
             keyboard.text(btn2.name, `buyProduct-${btn2.id}`);
         }
-        keyboard.row(); // Добавляет строку с одной или двумя кнопками
+
+        keyboard.row();
     }
 
     keyboard.text('🔙 Назад', ButtonEnums.MENU).row();
