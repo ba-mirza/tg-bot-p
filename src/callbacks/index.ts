@@ -4,6 +4,7 @@ import {CallbackQueryContext} from "grammy";
 import {MyContext} from "../types.js";
 import {User} from "../models/User.js";
 import {products} from "../consts/product.js";
+import {Order} from "../models/Order.js";
 
 type CbQueryContext = CallbackQueryContext<MyContext>;
 
@@ -77,7 +78,7 @@ export const buyProductById = (ctx: CbQueryContext) => {
             chatId,
             product.name,
             product.description,
-            product.toString(),
+            product.id.toString(),
             'UAH',
             [
                 {label: 'Гривен', amount: product.price * 100,}
@@ -90,15 +91,43 @@ export const buyProductById = (ctx: CbQueryContext) => {
             }
         )
     } catch (err) {
-        console.error('Error in payment', err)
+        console.error('Error in payment', err);
         ctx.reply('Произошла ошибка при оплате\nПожалуйста, напишите сюда: @SupportBot');
     }
 };
 
 export const telegramSuccessPayment = async (ctx: MyContext) => {
     console.log("Sending telegram success payment\n", ctx.message?.successful_payment);
-    ctx.reply(
-        'Оплата прошла успешна',
-        {reply_markup: Route.Menu}
-    );
+
+    if(!ctx.message?.successful_payment) {
+        return ctx.reply("Что-то пошло не так!");
+    }
+
+    const {invoice_payload, total_amount} = ctx.message?.successful_payment;
+
+    const productId = parseInt(invoice_payload);
+    const price = total_amount / 100;
+
+    try {
+        const user = await User.findOne({telegramId: ctx.from?.id});
+
+        if(!user) {
+            throw new Error(`User is not found: ${ctx.from?.id}`);
+        }
+
+        await Order.create({
+            userId: user._id,
+            productId,
+            price,
+        });
+
+        ctx.reply(
+            'Оплата прошла успешна',
+            {reply_markup: Route.Menu}
+        );
+
+    } catch (err) {
+        console.error('Error in payment', err);
+        ctx.reply("Произошла ошибка при оплате");
+    }
 }
