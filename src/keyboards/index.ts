@@ -14,21 +14,24 @@ export const Route = {
 } as const;
 
 export function generateButtons(btns: unknown) {
-    if (typeof btns !== "undefined" && Array.isArray(btns)) {
-        if (!btns.length) {
-            return Route.Back;
-        }
-
-        const productsButtonRows = btns.map((btn) => {
-            return InlineKeyboard.text(btn.name, `buyProduct-${btn.id}`);
-        });
-
-        const newKeyboard = InlineKeyboard.from([
-            productsButtonRows,
-            [InlineKeyboard.text('Назад', ButtonEnums.MENU)]
-        ])
-
-        return newKeyboard;
+    if (!Array.isArray(btns) || btns.length === 0) {
+        return Route.Back;
     }
-    return Route.Back;
+
+    const keyboard = new InlineKeyboard();
+
+    for (let i = 0; i < btns.length; i += 2) {
+        const btn1 = btns[i];
+        const btn2 = btns[i + 1];
+
+        keyboard.text(btn1.name, `buyProduct-${btn1.id}`);
+        if (btn2) {
+            keyboard.text(btn2.name, `buyProduct-${btn2.id}`);
+        }
+        keyboard.row(); // Добавляет строку с одной или двумя кнопками
+    }
+
+    keyboard.text('🔙 Назад', ButtonEnums.MENU).row();
+
+    return keyboard;
 }

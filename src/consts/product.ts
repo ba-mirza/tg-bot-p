@@ -1,20 +1,50 @@
 export const products = [
     {
         id: 1,
-        name: "Product 1",
-        description: "This is the product 1 description",
-        price: 1500
+        name: "Карак",
+        price: 750,
+        description: "Ароматный черный чай с молоком и специями в восточном стиле."
     },
     {
         id: 2,
-        name: "Product 2",
-        description: "This is the product 2 description",
-        price: 2000
+        name: "Магриби",
+        price: 2000,
+        description: "Традиционный марокканский чай с мятой и зелёным чаем."
     },
     {
         id: 3,
-        name: "Product 3",
-        description: "This is the product 3 description",
-        price: 750
+        name: "Адани",
+        price: 750,
+        description: "Йеменский чай с насыщенным вкусом кардамона и специй."
     },
-]
+    {
+        id: 4,
+        name: "Турецкий",
+        price: 750,
+        description: "Крепкий черный чай, подаваемый в традиционном турецком стиле."
+    },
+    {
+        id: 5,
+        name: "Султани",
+        price: 750,
+        description: "Изысканный чай с нотками розы и восточными пряностями."
+    },
+    {
+        id: 6,
+        name: "Глинтвейн",
+        price: 750,
+        description: "Чай с пряностями и фруктами, имитирующий вкус глинтвейна."
+    },
+    {
+        id: 7,
+        name: "Цитрусовый",
+        price: 750,
+        description: "Освежающий чай с ароматом лимона, апельсина и лайма."
+    },
+    {
+        id: 8,
+        name: "Малина-Имбирь",
+        price: 750,
+        description: "Фруктовый чай с малиной и лёгкой остротой имбиря."
+    },
+];

@@ -4,14 +4,20 @@ import * as mongoose from "mongoose";
 import {start} from "./commands/index.js";
 import {hydrate} from "@grammyjs/hydrate";
 import {MyContext} from "./types.js";
-import {buyProductById, menu, product, profile} from "./callbacks/index.js";
+import {buyProductById, menu, product, profile, telegramSuccessPayment} from "./callbacks/index.js";
 
 if(!process.env.BOT_TOKEN) {
   throw new Error('Bot token is not defined');
 }
 const bot = new Bot<MyContext>(process.env.BOT_TOKEN);
 
+bot.on('pre_checkout_query', (ctx: MyContext) => {
+  ctx.answerPreCheckoutQuery(true);
+});
+
 bot.use(hydrate());
+
+bot.on(':successful_payment', telegramSuccessPayment);
 
 bot.command('start', start);
 
